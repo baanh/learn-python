@@ -51,62 +51,6 @@ def quick_sort(arr):
     '''
     return _quick_sort_helper(arr, 0, len(arr) - 1)
 
-def counting_sort(arr, upper=None, lower=0):
-    '''
-    As described in "Introduction to Algorithms" (CLRS book)
-    Only works for arrays whose values are within a range (min, max)
-    O(n)
-    '''
-    if len(arr) <= 1:
-        return arr
-    if not upper:
-        lower, upper = _find_bounds(arr)
-    c = [0 for _ in range(lower, upper + 1)]
-    for value in arr:
-        c[value - lower] += 1
-    for i in range(1, upper - lower + 1):
-        c[i] += c[i-1]
-    b = arr[:]
-    for i in range(len(arr) - 1, -1, -1):
-        b[c[arr[i] - lower] - 1] = arr[i]
-        c[arr[i] - lower] -= 1
-    return b
-
-def radix_sort(arr, d):
-    '''
-    As described in "Introduction to Algorithms" (CLRS book)
-    the following procedure assumes that each element in the n-element array A has d digits, 
-    where digit 1 is the lowest-order digit and digit d is the highest-order digit.
-    We use counting sort as a stable subroutine for radix sort
-    '''
-    i = 10
-    for i in range(1, d + 1):
-        arr = _counting_sort_on_digit(arr, i)
-    return arr
-
-
-def bucket_sort(arr, buckets=10):
-    '''
-    As described in "Introduction to Algorithms" (CLRS book)
-    Bucket sort runs in linear time when the input is drawn from a uniform distribution.
-    The idea of bucket sort is to divide the interval [0, 1) into n equal-sized buckets, 
-    and then distribute the n input numbers into the buckets. 
-    Since the inputs are uniformly distributed over [0, 1), we don't expect many numbers 
-    to fall into each bucket. 
-    We then simply sort the numbers in each bucket and  go through the buckets in order, 
-    listing the elements in each.
-    '''
-    b = [[] for _ in range(buckets)]
-    for value in arr:
-        b[int(value * buckets)].append(value)
-
-    result = []
-    for i in range(buckets):
-        b[i] = insertion_sort(b[i])
-        result.extend(b[i])
-
-    return result
-
 def _swap(arr, i, j):
     temp = arr[i]
     arr[i] = arr[j]
@@ -193,11 +137,7 @@ def test():
         print(merge_sort(arr))
         print(heap_sort(arr))
         print(quick_sort(arr))
-        print(counting_sort(arr))
-    print(radix_sort(arrs[4], 3))
-    print(radix_sort(arrs[6], 1))
     arr = [random.random() for _ in range(100)]
-    a = bucket_sort(arr, 12)
     for i in range(1, len(a)):
         assert a[i - 1] <= a[i]
 
